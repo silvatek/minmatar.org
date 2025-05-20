@@ -34,7 +34,7 @@ class ErrorResponse(BaseModel):
     description="This is URL that will redirect to Discord and generate a token, redirecting back to the URL specified in the redirect_url query parameter.",  # pylint: disable=line-too-long
 )
 def login(request, redirect_url: str):
-    if hasattr(settings, "FAKE_LOGIN_USER_ID"):
+    if hasattr(settings, "FAKE_LOGIN_USER_ID") and settings.FAKE_LOGIN_USER_ID:
         return fake_login(request, redirect_url)
 
     logger.info(f"Adding redirect URL to session: {redirect_url}")
@@ -192,11 +192,17 @@ def fake_login(request, redirect_url):
     user_id = int(settings.FAKE_LOGIN_USER_ID)
     logger.warning("*** FAKE USER LOGIN (id=%d) ***", user_id)
 
-    django_user = User.objects.get(id=user_id)
+    if User.objects.count() == 0:
+        django_user = User.objects.create(
+            id=user_id, username="Starter", is_superuser=True
+        )
+    else:
+        django_user = User.objects.get(id=user_id)
     payload = {
         "user_id": django_user.id,
         "username": django_user.username,
         "is_superuser": django_user.is_superuser,
+        "avatar": f"https://cdn.discordapp.com/avatars/124039469488799746/a_b162f7b2919a8f6eb6abcd5234f6f8d2.png",
         "sub": django_user.username,
         "iss": request.get_host(),
         "iat": timezone.now(),
@@ -209,3 +215,11 @@ def fake_login(request, redirect_url):
     logger.info("Redirecting to authentication URL... %s", redirect_url)
     redirect_url = redirect_url + "?token=" + encoded_jwt_token
     return redirect(redirect_url)
+
+
+def dump_settings():
+    for setting_name in dir(settings):
+        # Only log uppercase settings (convention for settings)
+        if setting_name.isupper():
+            setting_value = getattr(settings, setting_name)
+            logger.info(f"{setting_name}: {setting_value}")

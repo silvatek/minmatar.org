@@ -53,19 +53,19 @@ services:
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
 
-    bot:
-        build:
-            context: ./bot/
-            dockerfile: Dockerfile
-        working_dir: /opt/bot
-        command: python3 main.py
-        env_file:
-            - bot/.env
-        networks:
-            - local-network
-        depends_on:
-            db:
-                condition: service_healthy
+    # bot:
+    #     build:
+    #         context: ./bot/
+    #         dockerfile: Dockerfile
+    #     working_dir: /opt/bot
+    #     command: python3 main.py
+    #     env_file:
+    #         - bot/.env
+    #     networks:
+    #         - local-network
+    #     depends_on:
+    #         db:
+    #             condition: service_healthy
 
 
     frontend:
@@ -82,6 +82,8 @@ services:
                     - local.minmatar.org
         ports:
             - "4321:4321"
+        volumes:
+            - "./frontend/app/src/data:/app/src/data"
 
     proxy:
         image: nginx:stable
@@ -125,39 +127,39 @@ services:
             - db
             - app
 
-    mumble_murmur:
-        image: mumblevoip/mumble-server:v1.4.230-6
-        hostname: murmur
-        restart: on-failure
-        volumes:
-            - murmur_data:/data
-            - ./mumble/murmur/murmur.ini:/data/murmur.ini
-        environment:
-            - MUMBLE_CUSTOM_CONFIG_FILE=/data/murmur.ini
-            - MUMBLE_VERBOSE=true
-        networks:
-            - local-network
-        ports:
-            - 64738:64738
-            - 64738:64738/udp
-        expose:
-            - 6502
+    # mumble_murmur:
+    #     image: mumblevoip/mumble-server:v1.4.230-6
+    #     hostname: murmur
+    #     restart: on-failure
+    #     volumes:
+    #         - murmur_data:/data
+    #         - ./mumble/murmur/murmur.ini:/data/murmur.ini
+    #     environment:
+    #         - MUMBLE_CUSTOM_CONFIG_FILE=/data/murmur.ini
+    #         - MUMBLE_VERBOSE=true
+    #     networks:
+    #         - local-network
+    #     ports:
+    #         - 64738:64738
+    #         - 64738:64738/udp
+    #     expose:
+    #         - 6502
 
-    mumble_auth:
-        build:
-            context: ./backend/.
-            dockerfile: Dockerfile.mumble
-        restart: on-failure
-        command: python3 mumble.py
-        env_file:
-            - .env
-        networks:
-            - local-network
-        depends_on:
-            - mumble_murmur
-            - db
-        expose:
-            - 6502
+    # mumble_auth:
+    #     build:
+    #         context: ./backend/.
+    #         dockerfile: Dockerfile.mumble
+    #     restart: on-failure
+    #     command: python3 mumble.py
+    #     env_file:
+    #         - .env
+    #     networks:
+    #         - local-network
+    #     depends_on:
+    #         - mumble_murmur
+    #         - db
+    #     expose:
+    #         - 6502
 
 volumes:
     database: {}

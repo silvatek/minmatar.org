@@ -54,5 +54,10 @@
   "devDependencies": {
     "@types/gtag.js": "^0.0.20",
     "sass": "^1.69.5"
+  },
+  "overrides": {
+    "vite": {
+      "rollup": "npm:@rollup/wasm-node"
+    }
   }
 }
