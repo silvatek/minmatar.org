@@ -231,13 +231,9 @@ def get_corporation_by_id(request, corporation_id: int):
             payload["exempt"] = True
         if character.token:
             payload["registered"] = True
-            # primary_character = EvePrimaryCharacter.objects.filter(
-            #     character__token__user=character.token.user
-            # ).first()
             primary_character = user_primary_character(character.user)
             if (
                 primary_character
-                # and primary_character.character
                 and primary_character.character_id != character.character_id
             ):
                 payload["primary_character_id"] = (

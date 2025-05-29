@@ -1,7 +1,7 @@
 from django.contrib import admin
 from esi.models import CallbackRedirect, Scope, Token
 
-from .models import (
+from eveonline.models import (
     EvePlayer,
     EveAlliance,
     EveCharacter,
@@ -11,7 +11,7 @@ from .models import (
     EveCharacterTag,
     EveLocation,
 )
-from .helpers.characters import user_primary_character
+from eveonline.helpers.characters import user_primary_character
 
 # Register your models here.
 admin.site.register(EveSkillset)

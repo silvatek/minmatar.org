@@ -428,9 +428,6 @@ def create_standing_fleet(request):
             "detail": "User missing permission fleets.add_evestandingfleet"
         }
 
-    # eve_primary_character = EvePrimaryCharacter.objects.get(
-    #     character__token__user=request.user
-    # )
     primary_character = user_primary_character(request.user)
     if not primary_character:
         return 400, {"detail": "No primary character found"}
@@ -458,9 +455,6 @@ def claim_standing_fleet(request, fleet_id: int):
         }
 
     standing_fleet = EveStandingFleet.objects.get(id=fleet_id)
-    # eve_primary_character = EvePrimaryCharacter.objects.get(
-    #     character__token__user=request.user
-    # )
     primary_character = user_primary_character(request.user)
     if not primary_character:
         return 400, {"detail": "No primary character found"}
@@ -517,7 +511,7 @@ def get_fleet_metrics(request):
         .annotate(location_name=F("location__location_name"))
         .annotate(
             fc_corp_name=F(
-                "created_by__eveprimarycharacter__character__corporation__name"
+                "created_by__eveplayer__character__corporation__name"
             )
         )
         .annotate(audience_name=F("audience__name"))

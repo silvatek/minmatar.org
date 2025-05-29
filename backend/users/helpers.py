@@ -6,8 +6,6 @@ from django.db.models import signals
 from discord.models import DiscordUser
 from eveonline.helpers.characters import user_primary_character
 
-# from eveonline.models import EvePrimaryCharacter
-
 from .schemas import UserProfileSchema
 
 logger = logging.getLogger(__name__)

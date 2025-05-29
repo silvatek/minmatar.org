@@ -346,20 +346,6 @@ def put_primary_character(request, character_id: int):
     return 200, None
 
 
-# def fetch_primary_character(user) -> EvePrimaryCharacter | None:
-#     q = EvePrimaryCharacter.objects.filter(character__token__user=user)
-
-#     if q.count() > 1:
-#         logger.error(
-#             "User %s has %d primary characters", user.username, q.count()
-#         )
-
-#     if q.count() >= 1:
-#         return q.first()
-#     else:
-#         return None
-
-
 @router.get(
     "/primary",
     summary="Get primary character",
@@ -498,9 +484,6 @@ def handle_add_character_esi_callback(request, token, token_type):
             request.user.username,
         )
         set_primary_character(request.user, character)
-        # EvePrimaryCharacter.objects.create(
-        #     character=character, user=request.user
-        # )
 
     # populate corporation if CEO token
     if token_type in [TokenType.CEO, TokenType.MARKET, TokenType.FREIGHT]:
@@ -625,7 +608,6 @@ def get_user_characters(
         characters=[],
     )
 
-    # primary = EvePrimaryCharacter.objects.filter(user=char_user).first()
     primary = user_primary_character(char_user)
 
     chars = EveCharacter.objects.filter(user=char_user)
